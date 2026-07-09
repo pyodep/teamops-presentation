@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TeamOPS — 발표</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<!--
+  ┌────────────────────────────────────────────────────────────┐
+  │  TeamOPS 발표 덱 · 수정 안내                                  │
+  │                                                              │
+  │  · 각 슬라이드 = 아래 <section class="slide"> … </section>   │
+  │  · 텍스트는 블록 안에서 그대로 고치면 됩니다.                 │
+  │      제목 = <h2 class="s-title">   리드문장 = <p class="lede">│
+  │      섹션라벨 = <div class="eyebrow">   불릿 = <ul class="bullets">│
+  │  · 슬라이드 추가/삭제: <section class="slide">…</section> 를  │
+  │      복사·삭제만 하면 번호·진행바·이동은 자동 반영됩니다.     │
+  │  · 색/크기 등 디자인은 위쪽 <style> 에서 한 곳으로 조정.      │
+  │  · 맨 아래 <script>(네비게이션)는 건드릴 필요 없습니다.       │
+  └────────────────────────────────────────────────────────────┘
+-->
+<style>
+  /* ===== 디자인 토큰 (데모와 동일 톤) — 색은 여기서 조정 ===== */
+  :root{
+    --paper:#f5f4f2; --card:#ffffff;
+    --ink:#1a1a1d; --ink-2:#2a2a2e; --muted:#5f5f63; --faint:#9a9a9d; --line:#e6e5e2;
+    --pt:#5b5bd6; --pt-wash:rgba(91,91,214,.08);
+    --dark:#1f1f22;
+    --f:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    /* 타이포 스케일 (과하지 않게) */
+    --t-title:clamp(25px, 3.0vw, 40px);
+    --t-lede:clamp(16px, 1.45vw, 20px);
+    --t-body:clamp(15px, 1.25vw, 18px);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:var(--f); color:var(--ink-2); overflow:hidden; -webkit-font-smoothing:antialiased;
+    background:radial-gradient(125% 100% at 50% 0%, #f8f7f5 0%, #efeeeb 60%, #e7e6e2 100%);
+  }
+
+  /* ===== 덱 골격 ===== */
+  .deck{ position:fixed; inset:0; overflow:hidden; }
+  .track{ display:flex; height:100vh; transition:transform .62s cubic-bezier(.22,.61,.36,1); will-change:transform; }
+  .slide{ position:relative; min-width:100vw; height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:8vh 9vw 12vh; }
+  .inner{ width:100%; max-width:1080px; margin:0 auto; }
+
+  /* ===== 공통 타이포 / 레이아웃 헬퍼 ===== */
+  .eyebrow{ display:inline-flex; align-items:center; gap:9px; font:700 clamp(12px,1.05vw,13.5px) var(--f);
+    letter-spacing:.01em; color:var(--muted); margin-bottom:18px; }
+  .eyebrow::before{ content:""; width:18px; height:2px; background:var(--pt); border-radius:2px; }
+  .s-title{ font:700 var(--t-title) var(--f); color:var(--ink); line-height:1.14; letter-spacing:-.02em; }
+  .lede{ font:400 var(--t-lede) var(--f); color:var(--muted); line-height:1.55; margin-top:22px; max-width:60ch; }
+  .body{ font:400 var(--t-body) var(--f); color:var(--ink-2); line-height:1.7; margin-top:22px; max-width:62ch; }
+
+  .bullets{ list-style:none; margin-top:26px; display:flex; flex-direction:column; gap:16px; }
+  .bullets li{ position:relative; padding-left:26px; font:400 var(--t-body) var(--f); color:var(--ink-2); line-height:1.6; max-width:58ch; }
+  .bullets li::before{ content:""; position:absolute; left:2px; top:.62em; width:8px; height:8px; border-radius:50%; background:var(--pt); }
+  .bullets li b{ color:var(--ink); font-weight:700; }
+
+  .cols{ display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:30px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:26px 28px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03), 0 16px 40px -28px rgba(0,0,0,.2); }
+  .card h3{ font:700 clamp(17px,1.6vw,21px) var(--f); color:var(--ink); margin-bottom:10px; }
+  .card p{ font:400 var(--t-body) var(--f); color:var(--muted); line-height:1.65; }
+  .card .tag{ display:inline-block; font:700 11px var(--f); letter-spacing:.1em; text-transform:uppercase;
+    color:var(--pt); background:var(--pt-wash); padding:4px 10px; border-radius:999px; margin-bottom:14px; }
+
+  /* ===== 표지 (TeamOPS · 1조 + 팀 목록 창) ===== */
+  .cover{ padding:6vh 7vw; }
+  .cover-grid{ width:100%; max-width:1220px; margin:0 auto; display:grid;
+    grid-template-columns:0.82fr 1.18fr; gap:64px; align-items:center; }
+  .wordmark{ display:flex; align-items:center; gap:15px; }
+  .wordmark .logo{ width:clamp(44px,4.2vw,56px); aspect-ratio:1; border-radius:14px; background:var(--dark); color:#fff;
+    display:flex; align-items:center; justify-content:center; font:700 clamp(22px,2.1vw,28px) var(--f); }
+  .wordmark .name{ font:800 clamp(40px,4.6vw,62px) var(--f); color:var(--ink); letter-spacing:-.03em; line-height:1; }
+  .team-line{ margin-top:20px; font:700 clamp(18px,1.9vw,24px) var(--f); color:var(--ink-2); }
+  .cover-desc{ margin-top:16px; font:400 var(--t-body) var(--f); color:var(--muted); line-height:1.6; max-width:34ch; }
+  .meta{ margin-top:28px; font:500 var(--t-body) var(--f); color:var(--faint); }
+
+  /* 실제 제품 창(app window) */
+  .appwin{ background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    box-shadow:0 2px 6px rgba(0,0,0,.05), 0 44px 84px -44px rgba(0,0,0,.38); }
+  .win-bar{ height:40px; display:flex; align-items:center; padding:0 15px; background:#faf9f7; border-bottom:1px solid var(--line); }
+  .dots{ display:flex; gap:7px; }
+  .dots i{ width:11px; height:11px; border-radius:50%; }
+  .win-title{ font:600 12.5px var(--f); color:var(--faint); margin:0 auto; padding-right:40px; }
+  .win-body{ padding:18px 22px 16px; }
+  .pboard-h{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px; padding:0 2px; }
+  .pboard-h b{ font:700 clamp(15px,1.5vw,17px) var(--f); color:var(--ink); }
+  .pboard-h span{ font:500 12.5px var(--f); color:var(--faint); }
+  .prow{ display:flex; gap:13px; align-items:flex-start; padding:12px 2px; border-top:1px solid var(--line); }
+  .prow:first-of-type{ border-top:none; }
+  .pcb{ width:19px; height:19px; border-radius:6px; border:1.6px solid #d4d4d0; background:#fff; flex-shrink:0; margin-top:1px;
+    display:flex; align-items:center; justify-content:center; }
+  .pcb.on{ background:var(--pt); border-color:var(--pt); }
+  .pcb.on svg{ width:11px; height:11px; color:#fff; }
+  .pt{ font:500 clamp(14px,1.35vw,15.5px) var(--f); color:var(--ink-2); line-height:1.4; }
+  .pt.done{ color:var(--faint); text-decoration:line-through; }
+  .pm{ display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .pas{ width:20px; height:20px; border-radius:50%; background:var(--c,#5b5bd6); color:#fff; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font:700 9px var(--f); letter-spacing:-.03em; }
+  .pname{ font:600 12.5px var(--f); color:var(--ink-2); }
+  .psrc{ margin-left:2px; font:500 11px var(--f); color:var(--faint); background:#f5f4f2; border:1px solid var(--line); padding:2px 8px; border-radius:5px; }
+
+  @media (max-width:920px){
+    .cover-grid{ grid-template-columns:1fr; gap:34px; }
+  }
+
+  /* ===== 자리표시(placeholder) ===== */
+  .todo{ display:inline-flex; align-items:center; gap:8px; margin-top:30px;
+    font:500 14px var(--f); color:var(--faint); background:rgba(0,0,0,.03); border:1px dashed var(--line);
+    padding:9px 14px; border-radius:10px; }
+  .todo::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--faint); }
+  .slide.ph .s-title{ color:var(--ink); }
+
+  /* ===== 목차 ===== */
+  .agenda{ margin-top:36px; max-width:940px; }
+  .arow{ display:grid; grid-template-columns:54px 1fr; gap:18px; align-items:baseline;
+    padding:22px 6px; border-top:1px solid var(--line); transition:padding-left .2s; }
+  .arow:first-child{ border-top:none; }
+  .anum{ font:700 clamp(15px,1.45vw,19px) var(--f); color:var(--pt); font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+  .atext .at{ font:700 clamp(18px,1.85vw,24px) var(--f); color:var(--ink); letter-spacing:-.01em; }
+  .atext .ad{ margin-top:7px; font:400 var(--t-body) var(--f); color:var(--muted); line-height:1.55; }
+
+  /* ===== 현황 01 · 시장 니치 (클릭 빌드: Notion → 협업툴 → TeamOPS) ===== */
+  .market{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-top:34px; align-items:stretch; }
+  /* 세 카드를 반드시 같은 행(1행)에 고정 — DOM 순서와 무관하게 같은 선상 */
+  .m-l{ grid-column:1; grid-row:1; } .m-c{ grid-column:2; grid-row:1; } .m-r{ grid-column:3; grid-row:1; }
+  /* 현황 슬라이드(3·4): 제목 블록을 살짝 위로 */
+  .s3 .inner, .s4 .inner{ transform:translateY(-5vh); }
+  /* eyebrow 앞 파란 선 제거(재사용): class="eyebrow bare" */
+  .eyebrow.bare::before{ display:none; }
+
+  /* ===== 현황 02 · 흩어진 생태계 (클릭 빌드: 조각 → 연결점 부재 → MCP 장벽) ===== */
+  .eco{ margin-top:28px; }
+  /* Microsoft(루트) → GitHub·Azure 가지 트리 */
+  .eco-tree{ width:640px; max-width:100%; margin:2px auto 0; display:flex; flex-direction:column; align-items:center; }
+  .eco-root{ width:264px; display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line);
+    border-radius:16px; padding:14px 18px; box-shadow:0 1px 2px rgba(0,0,0,.03), 0 16px 40px -28px rgba(0,0,0,.2); }
+  .ms-ico{ width:40px; height:40px; border-radius:10px; background:#fff; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ms-ico svg{ width:22px; height:22px; display:block; }
+  .eco-root b{ display:block; font:700 clamp(15px,1.5vw,19px) var(--f); color:var(--ink); letter-spacing:-.01em; }
+  .eco-root span{ font:400 clamp(12px,1.05vw,14px) var(--f); color:var(--muted); }
+  .eco-branch{ display:block; width:100%; height:38px; }
+  .eco-branch path{ stroke:#d8d7d3; stroke-width:2; fill:none; }
+  .eco-row{ display:flex; align-items:stretch; justify-content:center; }
+  .eco-tree .eco-row{ width:640px; justify-content:space-between; }
+  .eco-tree .eco-tile{ flex:0 0 250px; }
+  .eco-tree .eco-link{ flex:0 0 140px; }
+  .eco-tile{ flex:0 1 300px; display:flex; align-items:center; gap:14px;
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03), 0 16px 40px -28px rgba(0,0,0,.2); }
+  .eco-tile .ico{ width:40px; height:40px; }
+  .eco-tile .ico svg{ width:24px; height:24px; }
+  .eco-tile .ico.github svg{ fill:#181717; }
+  .eco-tile .ico.azure svg{ fill:#0078d4; }
+  .eco-tile b{ display:block; font:700 clamp(15px,1.5vw,19px) var(--f); color:var(--ink); letter-spacing:-.01em; }
+  .eco-tile span{ font:400 clamp(12px,1.05vw,14px) var(--f); color:var(--muted); }
+  .eco-link{ flex:0 0 130px; position:relative; display:flex; align-items:center; justify-content:center; }
+  .eco-link::before{ content:""; position:absolute; left:6px; right:6px; top:50%; transform:translateY(-50%);
+    border-top:2px dashed #cdb3a8; }
+  .eco-x{ position:relative; width:32px; height:32px; border-radius:50%; background:var(--card); border:1px solid #e7d3ca;
+    display:flex; align-items:center; justify-content:center; }
+  .eco-x svg{ width:14px; height:14px; stroke:#c0562e; stroke-width:2.6; fill:none; stroke-linecap:round; }
+  /* 2단계 연출: 컨테이너는 자리 유지, 가운데 점선이 이어지고(scaleX) ✕가 팝인 */
+  .eco-link.frag{ opacity:1; transform:none; }
+  .eco-link.frag::before{ transform:translateY(-50%) scaleX(0); transform-origin:center; transition:transform .5s cubic-bezier(.22,.61,.36,1); }
+  .eco-link.frag.is-shown::before{ transform:translateY(-50%) scaleX(1); }
+  .eco-link.frag .eco-x{ opacity:0; transform:scale(.4); transition:opacity .3s ease .4s, transform .35s cubic-bezier(.34,1.56,.64,1) .4s; }
+  .eco-link.frag.is-shown .eco-x{ opacity:1; transform:scale(1); }
+  @media (prefers-reduced-motion: reduce){
+    .eco-link.frag::before, .eco-link.frag.is-shown::before,
+    .eco-link.frag .eco-x, .eco-link.frag.is-shown .eco-x{ transition:none; }
+  }
+  .eco-note{ margin-top:24px; text-align:center; font:500 clamp(15px,1.4vw,18px) var(--f); color:var(--muted); line-height:1.6; }
+  .eco-note b{ color:var(--ink); font-weight:700; }
+  .eco-mcp{ margin-top:20px; display:flex; align-items:center; gap:16px;
+    background:rgba(0,0,0,.03); border:1.5px dashed var(--line); border-radius:16px; padding:18px 22px; }
+  .eco-mcp .lock{ width:42px; height:42px; border-radius:11px; background:#fff; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .eco-mcp .lock svg{ width:22px; height:22px; fill:#6a6a70; }
+  .eco-mcp .txt{ flex:1; font:400 clamp(13.5px,1.2vw,16px) var(--f); color:var(--ink-2); line-height:1.6; }
+  .eco-mcp .txt b{ color:var(--ink); font-weight:700; }
+  .eco-mcp .barrier{ flex-shrink:0; font:700 12px var(--f); color:#c0562e;
+    background:rgba(192,86,46,.1); border-radius:999px; padding:6px 12px; white-space:nowrap; }
+  .mcard{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 20px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03), 0 16px 40px -28px rgba(0,0,0,.2); display:flex; flex-direction:column; }
+  .m-icons{ display:flex; gap:8px; margin-bottom:13px; }
+  .ico{ width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    background:#fff; border:1px solid var(--line); flex-shrink:0; }
+  .ico svg{ width:22px; height:22px; display:block; }
+  .ico.notion svg{ fill:#191919; }
+  .ico.jira svg{ fill:#2684ff; }
+  .ico.conf svg{ fill:#0c66e4; }
+  .ico.asana svg{ fill:#f06a6a; }
+  .ico.hero-t{ font:800 18px var(--f); letter-spacing:-.02em; color:var(--pt); }
+  .m-name{ font:700 clamp(15px,1.5vw,20px) var(--f); color:var(--ink); letter-spacing:-.01em; line-height:1.25; }
+  .pc{ margin-top:16px; display:flex; flex-direction:column; gap:11px; }
+  .pc-row{ display:grid; grid-template-columns:40px 1fr; gap:10px; align-items:start; }
+  .pc-tag{ font:700 11px var(--f); padding:4px 0; border-radius:6px; text-align:center; }
+  .pc-tag.pro{ color:#1f8a5b; background:rgba(31,138,91,.1); }
+  .pc-tag.con{ color:#c0562e; background:rgba(192,86,46,.1); }
+  .pc-txt{ font:400 clamp(13px,1.1vw,15px) var(--f); color:var(--ink-2); line-height:1.5; }
+  /* 가운데 TeamOPS 히어로 — 강조 */
+  .mhero{ background:var(--pt); border-color:var(--pt); color:#fff;
+    box-shadow:0 1px 2px rgba(0,0,0,.05), 0 26px 54px -26px rgba(91,91,214,.55); }
+  .mhero .m-name{ color:#fff; font-size:clamp(18px,1.7vw,23px); }
+  .mhero .m-badge{ margin-top:14px; align-self:flex-start; font:700 12px var(--f);
+    color:#fff; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.32); padding:6px 12px; border-radius:999px; }
+  .mhero .m-sub{ margin-top:14px; font:400 clamp(13px,1.1vw,15px) var(--f); color:rgba(255,255,255,.88); line-height:1.55; }
+
+  /* ===== 전환 · 등장 애니메이션 (이동/클릭 시 요소가 유동적으로 떠오름) ===== */
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(20px); } to{ opacity:1; transform:translateY(0); } }
+  .slide .inner > *, .cover .cover-grid > *{ opacity:0; }
+  .slide.is-active .inner > *,
+  .slide.is-active .cover-grid > *{ animation:riseIn .64s cubic-bezier(.22,.61,.36,1) both; }
+  .slide.is-active .inner > *:nth-child(1){ animation-delay:.04s; }
+  .slide.is-active .inner > *:nth-child(2){ animation-delay:.12s; }
+  .slide.is-active .inner > *:nth-child(3){ animation-delay:.20s; }
+  .slide.is-active .inner > *:nth-child(4){ animation-delay:.28s; }
+  .slide.is-active .inner > *:nth-child(5){ animation-delay:.36s; }
+  .slide.is-active .inner > *:nth-child(6){ animation-delay:.44s; }
+  .slide.is-active .cover-grid > *:nth-child(1){ animation-delay:.10s; }
+  .slide.is-active .cover-grid > *:nth-child(2){ animation-delay:.26s; }
+  /* 클릭으로 하나씩 나타나는 빌드 요소(프래그먼트) */
+  .frag{ opacity:0; transform:translateY(24px);
+    transition:opacity .55s cubic-bezier(.22,.61,.36,1), transform .55s cubic-bezier(.22,.61,.36,1); }
+  .frag.is-shown{ opacity:1; transform:translateY(0); }
+  .mhero.frag{ transform:translateY(24px) scale(.96); }
+  .mhero.frag.is-shown{ transform:translateY(0) scale(1); }
+  /* 슬라이드3 · 니치 점유 안무: Notion(좌)·협업툴(우)이 가운데 쪽에 모여 차례로 올라오고, 마지막에 TeamOPS가 올라오며 둘을 밀어내고 가운데를 점유 */
+  .market .m-l, .market .m-r{ position:relative; z-index:1; }
+  .market .mhero{ position:relative; z-index:2; }
+  .market .m-l, .market .m-r, .market .mhero{
+    transition:transform .62s cubic-bezier(.34,.03,.2,1), opacity .5s ease; }
+  /* 좌우 카드: 가운데로 모인 채 아래에서 등장 (좌 → 우 순서) */
+  .market .m-l.frag{ opacity:0; transform:translateX(calc(50% + 12px)) translateY(24px); }
+  .market .m-l.frag.is-shown{ opacity:1; transform:translateX(calc(50% + 12px)) translateY(0); }
+  .market .m-r.frag{ opacity:0; transform:translateX(calc(-50% - 12px)) translateY(24px); }
+  .market .m-r.frag.is-shown{ opacity:1; transform:translateX(calc(-50% - 12px)) translateY(0); }
+  /* 가운데 TeamOPS: 마지막에 아래에서 올라옴 */
+  .market .mhero.frag{ opacity:0; transform:translateY(38px) scale(.9); }
+  .market .mhero.frag.is-shown{ opacity:1; transform:translateY(0) scale(1); }
+  /* TeamOPS 등장 → 좌우를 제자리로 '밀어내며' 같은 선상에 정렬 */
+  .market:has(.mhero.is-shown) .m-l.frag.is-shown{ transform:translateX(0) translateY(0); }
+  .market:has(.mhero.is-shown) .m-r.frag.is-shown{ transform:translateX(0) translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .slide .inner > *, .cover .cover-grid > *{ opacity:1; }
+    .slide.is-active .inner > *, .slide.is-active .cover-grid > *{ animation:none; }
+    .frag{ transition:opacity .2s linear; transform:none; }
+    .frag.is-shown, .mhero.frag, .mhero.frag.is-shown{ transform:none; }
+    .market .m-l.frag, .market .m-r.frag, .market .mhero.frag,
+    .market .m-l.frag.is-shown, .market .m-r.frag.is-shown, .market .mhero.frag.is-shown{
+      transform:none !important; transition:opacity .2s linear !important; }
+  }
+
+  /* ===== 시나리오 02 · 실 데모 임베드 슬라이드 ===== */
+  .sc-demo{ padding:4vh 4.5vw 5vh; justify-content:flex-start; }
+  .sc-head{ margin-bottom:14px; }
+  .sc-head .s-title{ font-size:clamp(22px,2.4vw,32px); }
+  .sc-frame{ flex:1; width:100%; border:1px solid var(--line); border-radius:18px; overflow:hidden;
+    background:#e9e8e4; box-shadow:0 2px 6px rgba(0,0,0,.05), 0 40px 80px -46px rgba(0,0,0,.4); }
+  .sc-frame iframe{ width:100%; height:100%; border:0; display:block; }
+
+  /* ===== 대상·목표·가치 · 3카드 클릭빌드 ===== */
+  .trio{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-top:32px; align-items:stretch; }
+  .trio .mcard{ display:flex; flex-direction:column; }
+  .tnum{ font:700 12px var(--f); letter-spacing:.12em; text-transform:uppercase; color:var(--pt); margin-bottom:12px; }
+  .trio h3{ font:700 clamp(17px,1.7vw,22px) var(--f); color:var(--ink); margin-bottom:10px; letter-spacing:-.01em; }
+  .trio p{ font:400 clamp(13.5px,1.2vw,16px) var(--f); color:var(--muted); line-height:1.6; }
+  .trio p b{ color:var(--ink); font-weight:700; }
+
+  /* ===== 시나리오 개요 · 흐름 클릭빌드 ===== */
+  .flow{ display:flex; align-items:flex-start; justify-content:center; flex-wrap:wrap; gap:6px 4px; margin-top:46px; }
+  .flow-node{ display:flex; flex-direction:column; align-items:center; gap:10px; width:118px; }
+  .flow-node .fn-ic{ width:56px; height:56px; border-radius:16px; background:var(--card); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font:800 15px var(--f); color:var(--pt);
+    box-shadow:0 1px 2px rgba(0,0,0,.03), 0 14px 30px -20px rgba(0,0,0,.2); }
+  .flow-node .fn-t{ font:600 clamp(13px,1.15vw,15px) var(--f); color:var(--ink-2); text-align:center; line-height:1.3; }
+  .flow-arrow{ align-self:flex-start; margin-top:18px; color:var(--faint); font:700 20px var(--f); }
+
+  /* ===== 전체 시스템 구조 · 파이프라인 클릭빌드 ===== */
+  .arch{ display:flex; align-items:stretch; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:36px; }
+  .arch-stage{ flex:0 1 188px; background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:20px 18px; text-align:center; box-shadow:0 1px 2px rgba(0,0,0,.03), 0 16px 40px -28px rgba(0,0,0,.2); }
+  .arch-stage .as-k{ font:700 11px var(--f); letter-spacing:.1em; text-transform:uppercase; color:var(--pt); margin-bottom:8px; }
+  .arch-stage b{ display:block; font:700 clamp(15px,1.4vw,18px) var(--f); color:var(--ink); margin-bottom:6px; letter-spacing:-.01em; }
+  .arch-stage span{ font:400 clamp(12px,1.05vw,14px) var(--f); color:var(--muted); line-height:1.5; }
+  .arch-arrow{ display:flex; align-items:center; color:var(--faint); font:700 20px var(--f); }
+
+  /* ===== 시나리오 스캐폴드 · '라이브 데모 예정' 배지 ===== */
+  .sc-soon{ display:inline-flex; align-items:center; gap:9px; margin-top:26px; font:600 14px var(--f); color:var(--pt);
+    background:var(--pt-wash); border:1px solid rgba(91,91,214,.22); padding:10px 16px; border-radius:10px; }
+  .sc-soon::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--pt); }
+
+  /* ===== 시나리오 개요(슬라이드6) · 스텝퍼 + 애니메이션 스테이지 ===== */
+  .s6 .flow-node.frag.is-shown .fn-ic{ background:var(--pt); border-color:var(--pt); color:#fff; }
+  .stage{ position:relative; margin-top:22px; height:min(42vh,360px); border:1px solid var(--line); border-radius:18px;
+    background:var(--card); overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,.03), 0 24px 60px -42px rgba(0,0,0,.32); }
+  .stage-hint{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font:500 14px var(--f); color:var(--faint); transition:opacity .3s; }
+  .stage:has(.panel.is-shown) .stage-hint{ opacity:0; }
+  .panel{ position:absolute; inset:0; background:var(--card); display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:22px; padding:26px; text-align:center; }
+  /* 현재(최신) 단계만 위에 오도록 — 이전 패널은 완전히 가려져 사라짐 */
+  .panel.p1{ z-index:1 } .panel.p2{ z-index:2 } .panel.p3{ z-index:3 }
+  .panel.p4{ z-index:4 } .panel.p5{ z-index:5 } .panel.p6{ z-index:6 }
+  .s6 .panel.frag, .s6 .panel.frag.is-shown{ transform:none; }
+  .panel .cap{ font:500 clamp(14px,1.3vw,17px) var(--f); color:var(--muted); line-height:1.55; max-width:46ch; }
+  .panel .cap b{ color:var(--ink); font-weight:700; }
+  .viz{ height:150px; display:flex; align-items:center; justify-content:center; }
+  /* p1 회의록 — '두서없이' 적은 메모가 툭툭 적히는 연출 */
+  .vmemo{ width:420px; max-width:72vw; background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px 20px;
+    text-align:left; box-shadow:0 10px 26px -18px rgba(0,0,0,.25); }
+  .vmemo-tag{ display:inline-block; font:700 10.5px var(--f); letter-spacing:.06em; color:var(--faint);
+    background:#f2f1ee; border-radius:6px; padding:3px 9px; margin-bottom:12px; }
+  .vmemo .ml{ font:500 clamp(13px,1.15vw,15.5px) var(--f); color:var(--ink-2); line-height:1.8; opacity:0; }
+  .vmemo .ml b{ color:var(--pt); font-weight:700; }
+  .p1.is-shown .ml{ animation:jot .4s ease forwards; }
+  .p1.is-shown .ml:nth-child(2){ animation-delay:.2s } .p1.is-shown .ml:nth-child(3){ animation-delay:.5s }
+  .p1.is-shown .ml:nth-child(4){ animation-delay:.8s } .p1.is-shown .ml:nth-child(5){ animation-delay:1.1s }
+  @keyframes jot{ from{ opacity:0; transform:translateY(7px) } to{ opacity:1; transform:none } }
+  /* p2 AI 정리&분배 — 할 일이 담당자에게 이동 */
+  .vdist{ display:flex; flex-direction:column; gap:14px; }
+  .vrow{ position:relative; width:300px; height:34px; }
+  .vrow .track{ position:absolute; left:10px; right:44px; top:50%; transform:translateY(-50%); border-top:2px dashed #dcdbd7; }
+  .vrow .av{ position:absolute; right:0; top:50%; transform:translateY(-50%); width:34px; height:34px; border-radius:50%;
+    background:var(--c,#5b5bd6); color:#fff; display:flex; align-items:center; justify-content:center; font:700 11px var(--f); }
+  .vrow .tk{ position:absolute; left:6px; top:50%; transform:translateY(-50%); width:26px; height:20px; border-radius:6px;
+    background:var(--pt-wash); border:1px solid var(--pt); opacity:0; }
+  .p2.is-shown .vrow .tk{ animation:travel 1s ease forwards; }
+  .p2.is-shown .vrow:nth-child(1) .tk{ animation-delay:.2s } .p2.is-shown .vrow:nth-child(2) .tk{ animation-delay:.55s } .p2.is-shown .vrow:nth-child(3) .tk{ animation-delay:.9s }
+  @keyframes travel{ 0%{ left:6px; opacity:0 } 12%{ opacity:1 } 88%{ opacity:1 } 100%{ left:calc(100% - 40px); opacity:1 } }
+  /* p3 AI 질의 — 질문/답변 말풍선 */
+  .vchat{ display:flex; flex-direction:column; gap:12px; width:330px; }
+  .bub{ padding:12px 15px; border-radius:14px; font:500 14px var(--f); max-width:84%; opacity:0; line-height:1.45; }
+  .bub b{ font-weight:700; }
+  .bub.q{ align-self:flex-end; background:var(--pt); color:#fff; border-bottom-right-radius:5px; }
+  .bub.a{ align-self:flex-start; background:#f2f1ee; color:var(--ink-2); border-bottom-left-radius:5px; }
+  .p3.is-shown .bub.q{ animation:popIn .4s ease .2s forwards; }
+  .p3.is-shown .bub.a{ animation:popIn .4s ease .9s forwards; }
+  @keyframes popIn{ from{ opacity:0; transform:translateY(9px) } to{ opacity:1; transform:none } }
+  /* p4 워크스페이스 — 체크리스트 완료 */
+  .vboard{ width:300px; display:flex; flex-direction:column; gap:10px; }
+  .brow{ display:flex; align-items:center; gap:12px; background:#fff; border:1px solid var(--line); border-radius:10px;
+    padding:11px 14px; font:500 14px var(--f); color:var(--ink-2); }
+  .brow .cb{ position:relative; width:20px; height:20px; border-radius:6px; border:2px solid #d4d4d0; flex-shrink:0; }
+  .brow .cb::after{ content:""; position:absolute; left:6px; top:2px; width:5px; height:9px; border:solid #fff;
+    border-width:0 2px 2px 0; transform:rotate(45deg); opacity:0; }
+  .p4.is-shown .brow .cb{ animation:cbFill .3s ease forwards; }
+  .p4.is-shown .brow .cb::after{ animation:cbTick .2s ease forwards; }
+  .p4.is-shown .brow:nth-child(1) .cb, .p4.is-shown .brow:nth-child(1) .cb::after{ animation-delay:.3s }
+  .p4.is-shown .brow:nth-child(2) .cb, .p4.is-shown .brow:nth-child(2) .cb::after{ animation-delay:.7s }
+  .p4.is-shown .brow:nth-child(3) .cb, .p4.is-shown .brow:nth-child(3) .cb::after{ animation-delay:1.1s }
+  @keyframes cbFill{ to{ background:var(--pt); border-color:var(--pt) } }
+  @keyframes cbTick{ to{ opacity:1 } }
+  /* p5 Team — 연락처 디렉터리 (필요할 때 직·간접 연락) */
+  .av svg{ width:56%; height:56%; fill:#fff; display:block; }
+  .vcontact{ display:flex; flex-direction:column; gap:12px; width:380px; }
+  .crow{ display:flex; align-items:center; gap:13px; background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:11px 14px; opacity:0; }
+  .crow .av{ width:34px; height:34px; border-radius:50%; background:var(--c,#5b5bd6); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; }
+  .crow .cmask{ flex:1; height:9px; border-radius:5px; background:#ecebe8; }
+  .crow .cbtns{ display:flex; gap:7px; }
+  .crow .ch{ width:28px; height:28px; border-radius:8px; background:var(--pt-wash); border:1px solid rgba(91,91,214,.2);
+    display:flex; align-items:center; justify-content:center; }
+  .crow .ch svg{ width:15px; height:15px; fill:var(--pt); }
+  .p5.is-shown .crow{ animation:jot .4s ease forwards; }
+  .p5.is-shown .crow:nth-child(1){ animation-delay:.15s } .p5.is-shown .crow:nth-child(2){ animation-delay:.4s } .p5.is-shown .crow:nth-child(3){ animation-delay:.65s }
+  /* p6 오너 권한 — 잠금 배지 + 지표 바 */
+  .vowner{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+  .ow-badge{ display:inline-flex; align-items:center; gap:8px; font:700 13px var(--f); color:var(--pt);
+    background:var(--pt-wash); border:1px solid rgba(91,91,214,.25); padding:8px 14px; border-radius:999px; opacity:0; }
+  .ow-badge svg{ width:15px; height:15px; fill:var(--pt); }
+  .ow-bars{ display:flex; flex-direction:column; gap:11px; width:280px; }
+  .ow-bar{ height:12px; border-radius:6px; background:#ecebe8; overflow:hidden; }
+  .ow-bar i{ display:block; height:100%; width:0; border-radius:6px; background:var(--pt); }
+  .p6.is-shown .ow-badge{ animation:popIn .4s ease .15s forwards; }
+  .p6.is-shown .ow-bar i{ animation:barGrow .8s cubic-bezier(.22,.61,.36,1) forwards; }
+  .p6.is-shown .ow-bar:nth-child(1) i{ animation-delay:.35s } .p6.is-shown .ow-bar:nth-child(2) i{ animation-delay:.55s } .p6.is-shown .ow-bar:nth-child(3) i{ animation-delay:.75s }
+  @keyframes barGrow{ to{ width:var(--w) } }
+  @media (prefers-reduced-motion: reduce){
+    .s6 .panel *{ animation:none !important; }
+    .vmemo .ml{ opacity:1; transform:none } .vdist .tk{ opacity:1; left:calc(100% - 40px) }
+    .vchat .bub{ opacity:1; transform:none } .vboard .cb{ background:var(--pt); border-color:var(--pt) }
+    .vboard .cb::after{ opacity:1 } .vcontact .crow{ opacity:1 } .ow-badge{ opacity:1 } .ow-bar i{ width:var(--w) }
+  }
+
+  /* ===== 시나리오 01 · 회의록 → AI 구조화 추출 + 근거(출처) ===== */
+  .mtg{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:24px; }
+  .mtg-src{ flex:0 0 296px; align-self:stretch; background:#fff; border:1px solid var(--line); border-radius:14px;
+    overflow:hidden; text-align:left; box-shadow:0 2px 6px rgba(0,0,0,.04), 0 24px 54px -38px rgba(0,0,0,.4); display:flex; flex-direction:column; }
+  .memo-bar{ height:36px; display:flex; align-items:center; gap:7px; padding:0 13px; background:#faf9f7; border-bottom:1px solid var(--line); }
+  .memo-bar i{ width:10px; height:10px; border-radius:50%; }
+  .memo-bar .mt{ margin-left:7px; font:600 11.5px var(--f); color:var(--faint); }
+  .memo-body{ padding:15px 16px; }
+  .mline{ font:500 clamp(12.5px,1.15vw,14.5px) var(--f); color:var(--ink-2); line-height:1.85; opacity:0; }
+  .mline mark{ background:transparent; color:inherit; font-weight:700; border-radius:3px; padding:0 3px; }
+  .mtg-arrow{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--pt); opacity:0; }
+  .mtg-arrow .aa{ font:800 22px var(--f); } .mtg-arrow .al{ font:700 9.5px var(--f); letter-spacing:.1em; }
+  .mtg-out{ flex:0 1 470px; display:flex; flex-direction:column; gap:11px; text-align:left; }
+  .xcard{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:13px 16px; opacity:0;
+    box-shadow:0 1px 2px rgba(0,0,0,.03), 0 16px 40px -30px rgba(0,0,0,.25); }
+  .xhead{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .xbadge{ font:700 10px var(--f); letter-spacing:.05em; padding:3px 9px; border-radius:999px; flex-shrink:0; }
+  .xbadge.t-task{ color:var(--pt); background:var(--pt-wash); } .xbadge.t-dec{ color:#1f8a5b; background:rgba(31,138,91,.12); }
+  .xtitle{ font:700 clamp(13.5px,1.3vw,16px) var(--f); color:var(--ink); letter-spacing:-.01em; }
+  .xmeta{ display:flex; gap:7px; flex-wrap:wrap; margin-bottom:8px; }
+  .xchip{ display:inline-flex; align-items:center; gap:5px; font:600 11.5px var(--f); color:var(--muted);
+    background:#f2f1ee; border:1px solid var(--line); border-radius:6px; padding:3px 9px; }
+  .xchip svg{ width:12px; height:12px; fill:var(--muted); }
+  .xchip.pri{ color:#c0562e; background:rgba(192,86,46,.1); border-color:rgba(192,86,46,.2); }
+  .xquote{ border-left:3px solid var(--pt); background:var(--pt-wash); border-radius:0 8px 8px 0; padding:6px 11px; opacity:0; }
+  .xquote .qtag{ display:block; font:700 9px var(--f); letter-spacing:.07em; text-transform:uppercase; color:var(--pt); margin-bottom:2px; }
+  .xquote .qtext{ font:500 12.5px var(--f); color:var(--ink-2); line-height:1.4; }
+  .xmore{ font:600 12px var(--f); color:var(--faint); opacity:0; }
+  .mtg-inputs{ display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:18px; }
+  .mtg-inputs .il{ font:700 12px var(--f); color:var(--muted); }
+  .ichip{ display:inline-flex; align-items:center; gap:6px; font:600 12.5px var(--f); color:var(--ink-2);
+    background:#fff; border:1px solid var(--line); border-radius:999px; padding:5px 12px; opacity:0; box-shadow:0 1px 2px rgba(0,0,0,.03); }
+  .ichip svg{ width:14px; height:14px; fill:var(--muted); }
+  /* 회의록(캡처) — 입력칩(1) → 에디터+원문(2) → 저장(3) */
+  .cap-editor{ width:min(600px,94%); margin:22px auto 0; background:#fff; border:1px solid var(--line); border-radius:14px;
+    overflow:hidden; text-align:left; box-shadow:0 2px 6px rgba(0,0,0,.04), 0 28px 60px -40px rgba(0,0,0,.4); }
+  .cap-editor .memo-body{ padding:18px 20px; }
+  .cap-editor.is-shown .mline{ animation:jot .35s ease forwards; }
+  .cap-editor.is-shown .mline:nth-child(1){ animation-delay:.1s } .cap-editor.is-shown .mline:nth-child(2){ animation-delay:.32s }
+  .cap-editor.is-shown .mline:nth-child(3){ animation-delay:.54s } .cap-editor.is-shown .mline:nth-child(4){ animation-delay:.76s }
+  .cap-savedrow{ text-align:center; margin-top:16px; }
+  .cap-saved{ display:inline-flex; align-items:center; gap:9px; font:600 13px var(--f); color:#1f8a5b;
+    background:rgba(31,138,91,.1); border:1px solid rgba(31,138,91,.22); border-radius:10px; padding:9px 15px; }
+  .cap-saved svg{ width:15px; height:15px; fill:#1f8a5b; flex-shrink:0; }
+  .cap-saved code{ font:600 12px ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--ink-2); }
+  /* 근거 인용 애니메이션 (AI 정리 슬라이드에서 재사용) */
+  .xcard.is-shown .xquote{ animation:fadeIn .45s ease .35s forwards; }
+  /* AI 정리(8) — 원문 패널이 열리면 타이핑 + 키워드 하이라이트 */
+  .mtg-src.is-shown .mline{ animation:jot .35s ease forwards; }
+  .mtg-src.is-shown .mline:nth-child(1){ animation-delay:.1s } .mtg-src.is-shown .mline:nth-child(2){ animation-delay:.32s }
+  .mtg-src.is-shown .mline:nth-child(3){ animation-delay:.54s } .mtg-src.is-shown .mline:nth-child(4){ animation-delay:.76s }
+  .mtg-src.is-shown .mline mark{ animation:hl .4s ease 1s forwards; }
+  /* AI 정리(8) — 분배 스트립 (담당 배정 + GitHub Issue) */
+  .dist{ display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:18px; }
+  .dchip{ display:inline-flex; align-items:center; gap:8px; font:600 13px var(--f); color:var(--ink-2);
+    background:#fff; border:1px solid var(--line); border-radius:10px; padding:8px 14px; box-shadow:0 1px 2px rgba(0,0,0,.03); }
+  .dchip .av{ width:24px; height:24px; border-radius:50%; background:var(--c,#5b5bd6); display:flex; align-items:center; justify-content:center; }
+  .dchip.gh svg{ width:16px; height:16px; fill:#181717; }
+  .darrow2{ color:var(--faint); font:700 18px var(--f); }
+  /* AI 정리 & 분배(8) — 원문 → 할 일 추출 → 담당자에게 분배(토큰 이동) */
+  .d8{ display:flex; align-items:center; gap:18px; margin-top:26px; }
+  .d8 .mtg-src{ align-self:stretch; flex:0 0 250px; }
+  .d8-arrow{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--pt); }
+  .d8-arrow .aa{ font:800 22px var(--f); } .d8-arrow .al{ font:700 9.5px var(--f); letter-spacing:.1em; }
+  .d8-rows{ flex:1; display:flex; flex-direction:column; gap:14px; }
+  .d8-row{ display:flex; align-items:center; gap:10px; }
+  .d8-task{ flex:0 0 210px; display:flex; align-items:center; gap:9px; background:#fff; border:1px solid var(--line);
+    border-radius:10px; padding:9px 12px; box-shadow:0 1px 2px rgba(0,0,0,.03); font:600 13px var(--f); color:var(--ink-2); }
+  .d8-task .tb{ font:700 10px var(--f); color:var(--pt); background:var(--pt-wash); border-radius:5px; padding:2px 6px; flex-shrink:0; }
+  .d8-track{ flex:1; position:relative; height:34px; min-width:64px; }
+  .d8-track::before{ content:""; position:absolute; left:2px; right:8px; top:50%; transform:translateY(-50%); border-top:2px dashed #d8d7d3; }
+  .d8-tok{ position:absolute; left:2px; top:50%; transform:translateY(-50%); width:22px; height:18px; border-radius:5px;
+    background:var(--pt-wash); border:1px solid var(--pt); opacity:0; }
+  .d8-person{ flex:0 0 42px; width:42px; height:42px; border-radius:50%; background:var(--c,#5b5bd6);
+    display:flex; align-items:center; justify-content:center; }
+  .d8-person svg{ width:56%; height:56%; fill:#fff; }
+  .d8-tok.frag{ opacity:0; transform:translateY(-50%); }
+  .d8-tok.frag.is-shown{ transform:translateY(-50%); animation:travel 1s ease forwards; }
+  @media (prefers-reduced-motion: reduce){
+    .d8-tok.frag, .d8-tok.frag.is-shown{ animation:none; opacity:1; left:calc(100% - 30px); }
+  }
+  @keyframes hl{ to{ background:var(--pt-wash); color:var(--pt); } }
+  @keyframes fadeIn{ from{ opacity:0 } to{ opacity:1 } }
+  @media (prefers-reduced-motion: reduce){
+    .cap-editor.is-shown .mline, .xcard.is-shown .xquote, .mtg-src.is-shown .mline, .mtg-src.is-shown .mline mark{ animation:none; }
+    .cap-editor.is-shown .mline, .mtg-src.is-shown .mline{ opacity:1 } .xcard.is-shown .xquote{ opacity:1 }
+    .mtg-src.is-shown .mline mark{ background:var(--pt-wash); color:var(--pt) }
+  }
+
+  /* ===== 하단 바 / 네비게이션 / 진행바 ===== */
+  #bar{ position:fixed; top:0; left:0; height:3px; background:var(--pt); width:0; transition:width .5s ease; z-index:60; }
+  .brand{ position:fixed; left:34px; bottom:26px; z-index:55; display:flex; align-items:center; gap:9px; opacity:.9; }
+  .brand .lg{ width:24px; height:24px; border-radius:7px; background:var(--dark); color:#fff;
+    display:flex; align-items:center; justify-content:center; font:700 12px var(--f); }
+  .brand b{ font:700 14px var(--f); color:var(--ink); }
+  .nav{ position:fixed; right:34px; bottom:24px; z-index:55; display:flex; align-items:center; gap:12px; }
+  .nav .count{ font:600 14px var(--f); color:var(--muted); font-variant-numeric:tabular-nums; letter-spacing:.05em; }
+  .nav button{ width:40px; height:40px; border-radius:11px; border:1px solid var(--line); background:rgba(255,255,255,.85);
+    backdrop-filter:blur(8px); color:var(--ink); cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:transform .1s, box-shadow .2s, opacity .2s; box-shadow:0 3px 10px rgba(0,0,0,.06); }
+  .nav button:hover{ transform:translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.1); }
+  .nav button:disabled{ opacity:.32; cursor:default; transform:none; box-shadow:none; }
+  .nav button svg{ width:19px; height:19px; }
+  .hint{ position:absolute; left:9vw; bottom:8vh; font:500 13.5px var(--f); color:var(--faint); }
+  .hint kbd{ font:600 12px var(--f); background:#fff; border:1px solid var(--line); border-bottom-width:2px;
+    border-radius:6px; padding:2px 7px; color:var(--muted); margin:0 2px; }
+</style>
+</head>
+<body>
+  <div id="bar"></div>
+
+  <div class="deck">
+    <div class="track" id="track">
+
+      <!-- ===== SLIDE 1 · 표지 =================================== -->
+      <section class="slide cover">
+        <div class="cover-grid">
+          <!-- 좌: 제목 (여기 텍스트만 고치면 됩니다) -->
+          <div class="cover-left">
+            <div class="wordmark"><div class="logo">T</div><span class="name">TeamOPS</span></div>
+            <div class="team-line">1조</div>
+            <p class="cover-desc">소규모 팀을 위한 AI 협업 워크스페이스</p>
+          </div>
+          <!-- 우: 할 일 목록 창 — 담당자로 팀원 6명이 하나씩. 텍스트/담당자 자유 수정 -->
+          <div class="cover-right">
+            <div class="appwin">
+              <div class="win-bar"><span class="dots"><i style="background:#f0605c"></i><i style="background:#f6bd50"></i><i style="background:#61c554"></i></span><span class="win-title">TeamOPS — 1조</span></div>
+              <div class="win-body">
+                <div class="pboard-h"><b>할 일</b><span>회의록에서 정리됨 · 6개</span></div>
+                <div class="prow">
+                  <span class="pcb on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                  <div><div class="pt done">발표 시나리오·데모 최종 점검</div><div class="pm"><span class="pas" style="--c:#5b5bd6">은표</span><span class="pname">이은표</span><span class="psrc">회의록 07-08</span></div></div>
+                </div>
+                <div class="prow">
+                  <span class="pcb"></span>
+                  <div><div class="pt">사용자 인터뷰 5건 일정 잡기</div><div class="pm"><span class="pas" style="--c:#e0603a">규륭</span><span class="pname">김규륭</span><span class="psrc">회의록 06-29</span></div></div>
+                </div>
+                <div class="prow">
+                  <span class="pcb"></span>
+                  <div><div class="pt">로그인 API 우선 구현</div><div class="pm"><span class="pas" style="--c:#2a6fdb">현성</span><span class="pname">김현성</span><span class="psrc">회의록 06-19</span></div></div>
+                </div>
+                <div class="prow">
+                  <span class="pcb"></span>
+                  <div><div class="pt">온보딩 플로우 와이어프레임 검토</div><div class="pm"><span class="pas" style="--c:#7c6cd6">현민</span><span class="pname">손현민</span><span class="psrc">회의록 06-29</span></div></div>
+                </div>
+                <div class="prow">
+                  <span class="pcb"></span>
+                  <div><div class="pt">디자인 시스템 컬러 토큰 정리</div><div class="pm"><span class="pas" style="--c:#1f8a5b">현수</span><span class="pname">김현수</span><span class="psrc">회의록 06-17</span></div></div>
+                </div>
+                <div class="prow">
+                  <span class="pcb"></span>
+                  <div><div class="pt">RAG 파이프라인 다듬기</div><div class="pm"><span class="pas" style="--c:#d9822b">다현</span><span class="pname">홍다현</span><span class="psrc">회의록 06-24</span></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 2 · 목차 ================================== -->
+      <section class="slide">
+        <div class="inner">
+          <h2 class="s-title">목차</h2>
+          <div class="agenda">
+            <div class="arow">
+              <div class="anum">01</div>
+              <div class="atext"><div class="at">현황</div><div class="ad">소규모 팀 협업 도구의 부재 및 Microsoft의 흩어진 생태계</div></div>
+            </div>
+            <div class="arow">
+              <div class="anum">02</div>
+              <div class="atext"><div class="at">고객 · 목적 · 시장경쟁력</div><div class="ad">누구를 위해, 무엇을 위해, 무엇으로 이기는가</div></div>
+            </div>
+            <div class="arow">
+              <div class="anum">03</div>
+              <div class="atext"><div class="at">사용자 시나리오 &amp; 기능</div><div class="ad">주요 6가지 기능</div></div>
+            </div>
+            <div class="arow">
+              <div class="anum">04</div>
+              <div class="atext"><div class="at">전체 시스템 구조</div><div class="ad">RAG 파이프라인부터 GitHub · Azure 연결까지</div></div>
+            </div>
+            <div class="arow">
+              <div class="anum">05</div>
+              <div class="atext"><div class="at">실 제품 데모 · MVP 시연</div><div class="ad">작동하는 MVP로 핵심 흐름을 직접 시연</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 3 · 현황 ① 문제 (클릭 빌드) =============== -->
+      <!-- 제목만 보이다가 → 클릭① Notion → 클릭② Jira·Confluence·Asana → 클릭③ 가운데 TeamOPS -->
+      <section class="slide s3">
+        <div class="inner">
+          <div class="eyebrow bare">현황 · 01</div>
+          <h2 class="s-title">소규모 팀을 위한 협업 도구의 부재</h2>
+
+          <div class="market">
+            <!-- 1단계: Notion(좌) 먼저 올라옴 -->
+            <div class="mcard m-l frag" data-step="1">
+              <div class="m-icons"><span class="ico notion"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg></span></div>
+              <div class="m-name">Notion</div>
+              <div class="pc">
+                <div class="pc-row"><span class="pc-tag pro">장점</span><span class="pc-txt">자동화 시스템 · 자유로운 공유</span></div>
+                <div class="pc-row"><span class="pc-tag con">단점</span><span class="pc-txt">자동화 설계가 복잡하고, ‘팀’ 전용이 아님</span></div>
+              </div>
+            </div>
+            <!-- 2단계: 팀 협업툴(우) 올라옴 -->
+            <div class="mcard m-r frag" data-step="2">
+              <div class="m-icons"><span class="ico jira"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.005-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24 12.483V1.005A1.001 1.001 0 0 0 23.013 0Z"/></svg></span><span class="ico conf"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M.87 18.257c-.248.382-.53.875-.763 1.245a.764.764 0 0 0 .255 1.04l4.965 3.054a.764.764 0 0 0 1.058-.26c.199-.332.454-.763.733-1.221 1.967-3.247 3.945-2.853 7.508-1.146l4.957 2.337a.764.764 0 0 0 1.028-.382l2.364-5.346a.764.764 0 0 0-.382-1 599.851 599.851 0 0 1-4.965-2.361C10.911 10.97 5.224 11.185.87 18.257zM23.131 5.743c.249-.405.531-.875.764-1.25a.764.764 0 0 0-.256-1.034L18.675.404a.764.764 0 0 0-1.058.26c-.195.335-.451.763-.734 1.225-1.966 3.246-3.945 2.85-7.508 1.146L4.437.694a.764.764 0 0 0-1.027.382L1.046 6.422a.764.764 0 0 0 .382 1c1.039.49 3.105 1.467 4.965 2.361 6.698 3.246 12.392 3.029 16.738-4.04z"/></svg></span><span class="ico asana"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.78 12.653c-2.882 0-5.22 2.336-5.22 5.22s2.338 5.22 5.22 5.22 5.22-2.34 5.22-5.22-2.336-5.22-5.22-5.22zm-13.56 0c-2.88 0-5.22 2.337-5.22 5.22s2.338 5.22 5.22 5.22 5.22-2.338 5.22-5.22-2.336-5.22-5.22-5.22zm12-6.525c0 2.883-2.337 5.22-5.22 5.22-2.882 0-5.22-2.337-5.22-5.22 0-2.88 2.338-5.22 5.22-5.22 2.883 0 5.22 2.34 5.22 5.22z"/></svg></span></div>
+              <div class="m-name">Jira · Confluence · Asana</div>
+              <div class="pc">
+                <div class="pc-row"><span class="pc-tag pro">장점</span><span class="pc-txt">‘팀’을 위한 설계</span></div>
+                <div class="pc-row"><span class="pc-tag con">단점</span><span class="pc-txt">비싼 가격, 도입·적용이 불편</span></div>
+              </div>
+            </div>
+            <!-- 3단계: TeamOPS가 올라오며 좌우를 밀어내고 가운데 점유 — 세 블럭 같은 선상 -->
+            <div class="mcard mhero m-c frag" data-step="3">
+              <div class="m-icons"><span class="ico hero-t">T</span></div>
+              <div class="m-name">TeamOPS</div>
+              <div class="m-badge">시장의 니치 공략</div>
+              <div class="m-sub">‘팀’ 전용 설계 + 간단한 자동화 — 딱 필요한 만큼만.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 4 · 현황 ② 흩어진 생태계 (클릭 빌드) ======= -->
+      <!-- 제목만 → 클릭① GitHub·Azure(끊긴 연결) → 클릭② 연결점 부재 → 클릭③ MCP 진입장벽 -->
+      <section class="slide s4">
+        <div class="inner">
+          <div class="eyebrow bare">현황 · 02</div>
+          <h2 class="s-title">흩어진 생태계, 연결되지 않은 도구들</h2>
+
+          <div class="eco">
+            <div class="eco-tree">
+              <!-- 1단계: Microsoft(루트) 아래 GitHub·Azure가 가지로 등장 -->
+              <div class="eco-root frag" data-step="1">
+                <span class="ms-ico"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="1" y="1" width="10" height="10" fill="#f25022"/><rect x="13" y="1" width="10" height="10" fill="#7fba00"/><rect x="1" y="13" width="10" height="10" fill="#00a4ef"/><rect x="13" y="13" width="10" height="10" fill="#ffb900"/></svg></span>
+                <div><b>Microsoft</b><span>GitHub · Azure를 소유한 모회사</span></div>
+              </div>
+              <svg class="eco-branch frag" data-step="1" viewBox="0 0 640 38" aria-hidden="true"><path d="M320 0 V12 M125 12 H515 M125 12 V38 M515 12 V38"/></svg>
+              <!-- GitHub·Azure 가지 (1단계) -->
+              <div class="eco-row frag" data-step="1">
+              <div class="eco-tile">
+                <span class="ico github"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span>
+                <div><b>GitHub</b><span>코드 · 이슈 · 저장소</span></div>
+              </div>
+              <!-- 2단계: 가운데 선이 연결되며 ✕ 등장 -->
+              <div class="eco-link frag" data-step="2">
+                <span class="eco-x"><svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8"/></svg></span>
+              </div>
+              <div class="eco-tile">
+                <span class="ico azure"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg></span>
+                <div><b>Azure</b><span>클라우드 · 배포</span></div>
+              </div>
+            </div>
+            </div>
+            <!-- 3단계: 연결점의 부재 -->
+            <div class="eco-note frag" data-step="3">같은 Microsoft 아래 있지만, GitHub·Azure를 <b>팀의 흐름으로 이어줄 연결점이 없습니다.</b></div>
+            <!-- 4단계: MCP는 있으나 진입장벽 -->
+            <div class="eco-mcp frag" data-step="4">
+              <span class="lock"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg></span>
+              <span class="txt"><b>MCP</b>라는 연결 표준은 있지만, 서버 구성·기술 설정이 필요해 <b>소규모 팀엔 진입장벽이 높습니다.</b></span>
+              <span class="barrier">진입장벽 높음</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 5 · 고객 · 목적 · 시장경쟁력 (클릭 빌드) === -->
+      <section class="slide">
+        <div class="inner">
+          <div class="eyebrow bare">Service</div>
+          <h2 class="s-title">고객 · 목적 · 시장경쟁력</h2>
+          <div class="trio">
+            <div class="mcard frag" data-step="1">
+              <div class="tnum">고객 · CUSTOMER</div>
+              <h3>소규모 팀</h3>
+              <p>스타트업 · 사이드프로젝트 · 소규모 조직. <b>전담 PM·인프라 인력이 없는 5~10명</b> 규모의 팀.</p>
+            </div>
+            <div class="mcard frag" data-step="2">
+              <div class="tnum">목적 · PURPOSE</div>
+              <h3>GitHub · Azure를 팀과 연결</h3>
+              <p>따로 놀던 <b>GitHub · Azure를 팀의 작업 흐름에 연결</b> — 회의에서 나온 일부터 개발·배포까지 하나로 이어줍니다.</p>
+            </div>
+            <div class="mcard frag" data-step="3">
+              <div class="tnum">시장경쟁력 · EDGE</div>
+              <h3>빈틈을 차지하는 포지션</h3>
+              <p>개인용 도구엔 없는 <b>팀 협업</b>, 대기업용 도구엔 없는 <b>간결함·합리적 비용</b>. 소규모 팀 시장의 빈틈을 정확히 공략.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 6 · 시나리오 개요 (스텝퍼 + 애니메이션 스테이지) === -->
+      <!-- 클릭마다: 상단 스텝퍼 노드가 켜지고, 아래 스테이지에서 해당 기능 애니메이션이 재생 -->
+      <section class="slide s6">
+        <div class="inner">
+          <div class="eyebrow bare">Scenario</div>
+          <h2 class="s-title">유저는 이렇게 일할 것입니다.</h2>
+          <div class="flow">
+            <div class="flow-node frag" data-step="1"><span class="fn-ic">01</span><span class="fn-t">회의록</span></div>
+            <span class="flow-arrow frag" data-step="2">→</span>
+            <div class="flow-node frag" data-step="2"><span class="fn-ic">02</span><span class="fn-t">AI 정리 &amp; 분배</span></div>
+            <span class="flow-arrow frag" data-step="3">→</span>
+            <div class="flow-node frag" data-step="3"><span class="fn-ic">03</span><span class="fn-t">AI 질의</span></div>
+            <span class="flow-arrow frag" data-step="4">→</span>
+            <div class="flow-node frag" data-step="4"><span class="fn-ic">04</span><span class="fn-t">워크스페이스</span></div>
+            <span class="flow-arrow frag" data-step="5">→</span>
+            <div class="flow-node frag" data-step="5"><span class="fn-ic">05</span><span class="fn-t">Team</span></div>
+            <span class="flow-arrow frag" data-step="6">→</span>
+            <div class="flow-node frag" data-step="6"><span class="fn-ic">06</span><span class="fn-t">오너 권한</span></div>
+          </div>
+
+          <div class="stage">
+            <div class="stage-hint">클릭하면 각 단계 애니메이션이 재생됩니다</div>
+
+            <!-- 01 회의록 — 두서없이 막 적어도 OK -->
+            <div class="panel frag p1" data-step="1">
+              <div class="viz"><div class="vmemo">
+                <span class="vmemo-tag">회의 메모 · 아무렇게나</span>
+                <div class="ml">오늘 로그인 API 급한 거 먼저 하고,</div>
+                <div class="ml">내일 온보딩 화면 봐야 됨. 아 참 그리고…</div>
+                <div class="ml">저건 <b>누가</b> 맡고, 이건 <b>내가</b> 할게.</div>
+                <div class="ml">인터뷰 메일만 <b>금요일까지</b> 보내줘~</div>
+              </div></div>
+              <div class="cap"><b>두서없이 적어도 됩니다.</b> 이렇게 편하게 흘려 써도 — AI가 할 일·담당자·기한으로 알아서 정리합니다.</div>
+            </div>
+
+            <!-- 02 AI 정리 & 분배 -->
+            <div class="panel frag p2" data-step="2">
+              <div class="viz"><div class="vdist">
+                <div class="vrow"><span class="track"></span><span class="tk"></span><span class="av" style="--c:#5b5bd6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg></span></div>
+                <div class="vrow"><span class="track"></span><span class="tk"></span><span class="av" style="--c:#e0603a"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg></span></div>
+                <div class="vrow"><span class="track"></span><span class="tk"></span><span class="av" style="--c:#1f8a5b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg></span></div>
+              </div></div>
+              <div class="cap">AI가 회의록에서 <b>할 일을 뽑아</b> 담당자에게 <b>자동 분배</b>합니다.</div>
+            </div>
+
+            <!-- 03 AI 질의 -->
+            <div class="panel frag p3" data-step="3">
+              <div class="viz"><div class="vchat">
+                <div class="bub q">이번 주 내 할 일은?</div>
+                <div class="bub a">회의록 3건에서 배정된 <b>2건</b>이 있어요.</div>
+              </div></div>
+              <div class="cap">쌓인 회의록·업무를 <b>자연어로 질문</b>하면, AI가 근거와 함께 답합니다.</div>
+            </div>
+
+            <!-- 04 워크스페이스 -->
+            <div class="panel frag p4" data-step="4">
+              <div class="viz"><div class="vboard">
+                <div class="brow"><span class="cb"></span>로그인 API 구현</div>
+                <div class="brow"><span class="cb"></span>온보딩 플로우 검토</div>
+                <div class="brow"><span class="cb"></span>디자인 토큰 정리</div>
+              </div></div>
+              <div class="cap">분배된 할 일과 문서가 <b>워크스페이스</b>에 모여, 팀이 실제로 일합니다.</div>
+            </div>
+
+            <!-- 05 Team — 연락처 디렉터리 (메일·메시지·통화) -->
+            <div class="panel frag p5" data-step="5">
+              <div class="viz"><div class="vcontact">
+                <div class="crow"><span class="av" style="--c:#5b5bd6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg></span><span class="cmask"></span><span class="cbtns"><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg></i><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></i><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.15 15.15 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.24 1.02z"/></svg></i></span></div>
+                <div class="crow"><span class="av" style="--c:#e0603a"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg></span><span class="cmask"></span><span class="cbtns"><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg></i><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></i><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.15 15.15 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.24 1.02z"/></svg></i></span></div>
+                <div class="crow"><span class="av" style="--c:#1f8a5b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg></span><span class="cmask"></span><span class="cbtns"><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg></i><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></i><i class="ch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.15 15.15 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.24 1.02z"/></svg></i></span></div>
+              </div></div>
+              <div class="cap">팀원 <b>연락처</b>가 한곳에 — 필요할 때 메일·메시지·통화로 <b>바로 연락</b>할 수 있습니다.</div>
+            </div>
+
+            <!-- 06 오너 권한 -->
+            <div class="panel frag p6" data-step="6">
+              <div class="viz"><div class="vowner">
+                <div class="ow-badge"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 11c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg> 오너 전용</div>
+                <div class="ow-bars">
+                  <div class="ow-bar"><i style="--w:78%"></i></div>
+                  <div class="ow-bar"><i style="--w:52%"></i></div>
+                  <div class="ow-bar"><i style="--w:90%"></i></div>
+                </div>
+              </div></div>
+              <div class="cap">오너에게만 열리는 <b>전체 진행 현황·권한 관리</b> 뷰.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 7 · 시나리오 01 회의록 (자동재생: 어떤 형식이든 → 구조화+근거) === -->
+      <section class="slide sc7">
+        <div class="inner">
+          <div class="eyebrow bare">Scenario · 01</div>
+          <h2 class="s-title">회의록 — 어떤 형식이든, 두서없이</h2>
+          <div class="mtg-inputs">
+            <span class="il">입력:</span>
+            <span class="ichip frag" data-step="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5z"/></svg>붙여넣기</span>
+            <span class="ichip frag" data-step="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>직접 입력</span>
+            <span class="ichip frag" data-step="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 8 6h3v7h2V6h3l-4-4zM5 18h14v2H5v-2z"/></svg>파일 업로드 · .txt·.md 등</span>
+          </div>
+          <div class="cap-editor frag" data-step="2">
+            <div class="memo-bar"><i style="background:#f0605c"></i><i style="background:#f6bd50"></i><i style="background:#61c554"></i><span class="mt">새 회의록 · 2026-07-09</span></div>
+            <div class="memo-body">
+              <p class="mline">로그인은 device flow로 가기로 했고,</p>
+              <p class="mline">토큰은 기기에 암호화 저장하기로.</p>
+              <p class="mline">구현은 화요일까지, 화면 UI는 누가 맡아줘.</p>
+              <p class="mline">device flow 처음이라 좀 불안하긴 함.</p>
+            </div>
+          </div>
+          <div class="cap-savedrow">
+            <span class="cap-saved frag" data-step="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>워크스페이스에 저장 · <code>docs/meetings/2026-07-09-로그인-인증.md</code> · GitHub 커밋됨</span>
+          </div>
+          <p class="lede">붙여넣든 파일이든, 두서없이 써도 OK — 원본 회의록이 <b>워크스페이스(GitHub)에 그대로 기록</b>되어 이후 모든 자동화의 출처가 됩니다.</p>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 8 · 시나리오 02 AI 정리 & 분배 (인라인 클릭 단계) === -->
+      <!-- ①원문 → ②AI→결정+근거 → ③할 일(담당·우선순위·마감)+근거 → ④담당 배정+GitHub Issue 분배 -->
+      <section class="slide sc8">
+        <div class="inner">
+          <div class="eyebrow bare">Scenario · 02</div>
+          <h2 class="s-title">AI 정리 &amp; 분배 — 회의록에서 할 일까지</h2>
+          <div class="mtg">
+            <div class="mtg-src frag" data-step="1">
+              <div class="memo-bar"><i style="background:#f0605c"></i><i style="background:#f6bd50"></i><i style="background:#61c554"></i><span class="mt">회의록 원문</span></div>
+              <div class="memo-body">
+                <p class="mline">로그인은 <mark>device flow</mark>로 가기로 했고,</p>
+                <p class="mline">토큰은 기기에 암호화 저장.</p>
+                <p class="mline">구현은 <mark>화요일까지</mark>, 화면 UI는 누가 맡아줘.</p>
+                <p class="mline">device flow 처음이라 좀 불안하긴 함.</p>
+              </div>
+            </div>
+            <div class="mtg-arrow frag" data-step="2"><span class="aa">→</span><span class="al">AI</span></div>
+            <div class="mtg-out">
+              <div class="xcard frag" data-step="2">
+                <div class="xhead"><span class="xbadge t-dec">결정</span><span class="xtitle">GitHub OAuth Device Flow 채택</span></div>
+                <div class="xquote"><span class="qtag">출처 · 회의록 L1</span><span class="qtext">"로그인은 device flow로 가기로 했고"</span></div>
+              </div>
+              <div class="xcard frag" data-step="3">
+                <div class="xhead"><span class="xbadge t-task">할 일</span><span class="xtitle">Device Flow 구현</span></div>
+                <div class="xmeta">
+                  <span class="xchip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg>담당 지정</span>
+                  <span class="xchip pri">우선순위 High</span>
+                  <span class="xchip">마감 화요일</span>
+                </div>
+                <div class="xquote"><span class="qtag">출처 · 회의록 L3</span><span class="qtext">"구현은 화요일까지"</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="dist frag" data-step="4">
+            <span class="dchip">승인된 할 일</span>
+            <span class="darrow2">→</span>
+            <span class="dchip"><span class="av" style="--c:#5b5bd6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/></svg></span>담당 배정</span>
+            <span class="darrow2">→</span>
+            <span class="dchip gh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>GitHub Issue #12 생성</span>
+          </div>
+          <p class="lede">AI가 회의록에서 <b>할 일·결정·리스크·질문</b>을 근거와 함께 뽑고, 승인하면 <b>담당자 배정 + GitHub Issue</b>로 분배됩니다.</p>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 9 · 시나리오 03 AI 질의 (스캐폴드) ======== -->
+      <section class="slide">
+        <div class="inner">
+          <div class="eyebrow bare">Scenario · 03</div>
+          <h2 class="s-title">AI 질의</h2>
+          <p class="lede">쌓인 회의록·업무에 대해 자연어로 물으면, AI가 근거와 함께 답합니다.</p>
+          <div class="sc-soon">라이브 데모 — 애니메이션 페이지 (제작 예정)</div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 10 · 시나리오 04 워크스페이스 (스캐폴드) == -->
+      <section class="slide">
+        <div class="inner">
+          <div class="eyebrow bare">Scenario · 04</div>
+          <h2 class="s-title">워크스페이스</h2>
+          <p class="lede">정리된 할 일과 문서가 한곳에 — 팀이 실제로 일하는 작업 공간.</p>
+          <div class="sc-soon">라이브 데모 — 애니메이션 페이지 (제작 예정)</div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 11 · 시나리오 05 Team (스캐폴드) ========== -->
+      <section class="slide">
+        <div class="inner">
+          <div class="eyebrow bare">Scenario · 05</div>
+          <h2 class="s-title">Team</h2>
+          <p class="lede">팀원 연락처가 한곳에 — 필요할 때 직·간접적으로 바로 연락할 수 있습니다.</p>
+          <div class="sc-soon">라이브 데모 — 애니메이션 페이지 (제작 예정)</div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 12 · 시나리오 06 오너 전용 현황 (스캐폴드) = -->
+      <section class="slide">
+        <div class="inner">
+          <div class="eyebrow bare">Scenario · 06</div>
+          <h2 class="s-title">오너 전용 현황</h2>
+          <p class="lede">오너에게만 보이는 팀 전체 진행 현황과 병목 지표.</p>
+          <div class="sc-soon">라이브 데모 — 애니메이션 페이지 (제작 예정)</div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 13 · 전체 시스템 구조 (파이프라인 클릭 빌드) = -->
+      <section class="slide">
+        <div class="inner">
+          <div class="eyebrow bare">Architecture</div>
+          <h2 class="s-title">전체 시스템 구조</h2>
+          <div class="arch">
+            <div class="arch-stage frag" data-step="1"><div class="as-k">입력</div><b>회의록</b><span>음성·텍스트 회의 기록</span></div>
+            <span class="arch-arrow frag" data-step="2">→</span>
+            <div class="arch-stage frag" data-step="2"><div class="as-k">이해</div><b>RAG 파이프라인</b><span>임베딩·검색으로 맥락 확보</span></div>
+            <span class="arch-arrow frag" data-step="3">→</span>
+            <div class="arch-stage frag" data-step="3"><div class="as-k">처리</div><b>LLM</b><span>할 일 추출 · 담당자 배정</span></div>
+            <span class="arch-arrow frag" data-step="4">→</span>
+            <div class="arch-stage frag" data-step="4"><div class="as-k">실행</div><b>워크스페이스 · Team</b><span>업무 분배 · 현황 관리</span></div>
+            <span class="arch-arrow frag" data-step="5">→</span>
+            <div class="arch-stage frag" data-step="5"><div class="as-k">연동</div><b>GitHub · Azure</b><span>MCP로 개발·클라우드 연결</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SLIDE 14 · 05 실 제품 데모 (라이브 시연 브릿지) ==== -->
+      <!-- 이 슬라이드에서 덱을 벗어나 실제 제품(index.html)을 직접 시연 -->
+      <section class="slide">
+        <div class="inner">
+          <div class="eyebrow">실 제품 데모 · 05</div>
+          <h2 class="s-title">이제, 실제 제품을 직접 보여드립니다</h2>
+          <p class="lede">작동하는 MVP로 <b>회의록 → AI 정리 → AI 질의 → 워크스페이스 → Team → 오너 현황</b>까지, 핵심 흐름을 라이브로 시연합니다.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- 하단 고정 UI -->
+  <div class="brand"><span class="lg">T</span><b>TeamOPS</b></div>
+  <div class="nav">
+    <button id="prev" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <span class="count" id="count">01 / 13</span>
+    <button id="next" aria-label="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+
+<script>
+  /* ===== 네비게이션 (수정 불필요) — 슬라이드 수는 자동 계산 ===== */
+  const track = document.getElementById('track');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  const countEl = document.getElementById('count');
+  const bar = document.getElementById('bar');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  let cur = 0;
+  const pad = (n) => String(n).padStart(2, '0');
+
+  // 슬라이드 안 '클릭 빌드' 요소들
+  const fragsOf = (s) => Array.from(s.querySelectorAll('.frag'));
+  // 같은 data-step 값은 한 번에 함께 등장. 값이 없으면 DOM 순서대로 개별 단계.
+  const stepOf = (f, i) => (f.dataset.step !== undefined ? +f.dataset.step : i + 1);
+  function fragInfo(s){
+    const frags = fragsOf(s);
+    const steps = frags.map(stepOf);
+    const max = steps.length ? Math.max(...steps) : 0;
+    let shown = 0;
+    frags.forEach((f, i) => { if (f.classList.contains('is-shown')) shown = Math.max(shown, steps[i]); });
+    return { frags, steps, max, shown };
+  }
+  function setStep(s, k, on){
+    const { frags, steps } = fragInfo(s);
+    frags.forEach((f, i) => { if (steps[i] === k) f.classList.toggle('is-shown', on); });
+  }
+
+  function updateButtons(){
+    const { max, shown } = fragInfo(slides[cur]);
+    prev.disabled = (cur === 0 && shown === 0);
+    next.disabled = (cur === total - 1 && shown === max);
+  }
+  // 슬라이드 이동(점프). revealFrags=true면 그 슬라이드의 빌드 요소를 모두 펼친 상태로 표시
+  function go(i, revealFrags){
+    cur = Math.max(0, Math.min(total - 1, i));
+    track.style.transform = `translateX(${-cur * 100}vw)`;
+    countEl.textContent = `${pad(cur + 1)} / ${pad(total)}`;
+    bar.style.width = ((cur + 1) / total * 100) + '%';
+    const s = slides[cur];
+    fragsOf(s).forEach(f => f.classList.toggle('is-shown', !!revealFrags));
+    // 현재 슬라이드에만 is-active → 재방문 시에도 등장 애니메이션 재생
+    slides.forEach(x => x.classList.remove('is-active'));
+    void s.offsetWidth;                    // 리플로우 강제(애니메이션 리셋)
+    s.classList.add('is-active');
+    updateButtons();
+  }
+  // 앞으로: 남은 단계가 있으면 다음 단계를 펼치고(같은 단계는 함께), 없으면 다음 슬라이드로
+  function advance(){
+    const s = slides[cur];
+    const { steps, shown } = fragInfo(s);
+    const next = steps.filter(k => k > shown).sort((a, b) => a - b)[0];
+    if (next !== undefined){ setStep(s, next, true); updateButtons(); }
+    else if (cur < total - 1){ go(cur + 1, false); }
+  }
+  // 뒤로: 펼친 단계가 있으면 접고, 없으면 이전 슬라이드(펼친 상태)로
+  function retreat(){
+    const s = slides[cur];
+    const { shown } = fragInfo(s);
+    if (shown > 0){ setStep(s, shown, false); updateButtons(); }
+    else if (cur > 0){ go(cur - 1, true); }
+  }
+
+  prev.addEventListener('click', (e) => { e.stopPropagation(); retreat(); });
+  next.addEventListener('click', (e) => { e.stopPropagation(); advance(); });
+  window.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); advance(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); retreat(); }
+    else if (e.key === 'Home') go(0, false);
+    else if (e.key === 'End') go(total - 1, true);
+  });
+  // 화면 아무 곳이나 클릭(또는 탭)하면 다음 단계로 (하단 이전/다음 버튼은 별도 동작)
+  document.querySelector('.deck').addEventListener('click', () => advance());
+  // 터치 스와이프
+  let sx = null;
+  window.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    if (sx == null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) > 50) (dx < 0 ? advance() : retreat());
+    sx = null;
+  });
+  go(0, false);
+</script>
+</body>
+</html>
